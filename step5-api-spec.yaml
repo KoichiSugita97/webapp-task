@@ -1,0 +1,165 @@
+# Step5：API仕様 SPEC
+
+app: 家トレ初心者向け筋トレ提案アプリ
+
+description: >
+  家トレ初心者向けに、
+  やる気度と登録済みダンベル重量をもとに
+  今日のおすすめ筋トレメニューを提案する。
+  また、トレーニング記録と継続日数管理を行う。
+
+---
+apis:
+  - endpoint: /api/dumbbells
+    method: POST
+    purpose: 所持ダンベル重量を登録する
+
+    request:
+      body:
+        weight: number
+
+    validation:
+      - weight は必須
+      - 0より大きい数値のみ許可
+
+    response:
+      201:
+        message: ダンベル重量を登録しました
+        data:
+          id: number
+          weight: number
+          userId: number
+
+      400:
+        message: weightは必須で、0より大きい数値である必要があります
+---
+- endpoint: /api/dumbbells
+  method: GET
+  purpose: 登録済みダンベル重量を取得する
+
+  request:
+    body: none
+
+  response:
+    200:
+      dumbbells:
+        - id: number
+          weight: number
+          userId: number
+
+---
+- endpoint: /api/recommendation
+  method: POST
+  purpose: >
+    やる気度と登録済みダンベル重量をもとに、
+    今日のおすすめ筋トレメニューを提案する
+
+  request:
+    body:
+      motivationLevel:
+        - low
+        - normal
+        - high
+
+  validation:
+    - motivationLevel は必須
+    - 登録済みダンベル重量が存在すること
+    - 初心者向け重量のみ提案する
+
+  response:
+    200:
+      trainingPart: string
+      exerciseName: string
+      recommendedWeight: number
+      reps: number
+      sets: number
+      message: string
+
+    example:
+      trainingPart: 肩
+      exerciseName: ダンベルショルダープレス
+      recommendedWeight: 7
+      reps: 10
+      sets: 3
+      message: 今日も少しずつ頑張ろう！
+
+    400:
+      message: motivationLevelは必須です
+
+    404:
+      message: ダンベル重量が未登録です
+
+---
+- endpoint: /api/training-records
+  method: POST
+  purpose: 実施したトレーニング内容を保存する
+
+  request:
+    body:
+      trainingPart: string
+      exerciseName: string
+      weight: number
+      reps: number
+      sets: number
+      trainingDate: string
+
+  validation:
+    - trainingPart は必須
+    - exerciseName は必須
+    - weight は 0 より大きい値
+    - reps は 0 より大きい値
+    - sets は 0 より大きい値
+
+  response:
+    201:
+      message: トレーニング記録を保存しました
+      data:
+        id: number
+        trainingPart: string
+        exerciseName: string
+        weight: number
+        reps: number
+        sets: number
+        trainingDate: string
+
+    400:
+      message: 入力内容が不正です
+
+---
+- endpoint: /api/training-records
+  method: GET
+  purpose: 過去のトレーニング履歴を取得する
+
+  request:
+    body: none
+
+  response:
+    200:
+      records:
+        - id: number
+          trainingPart: string
+          exerciseName: string
+          weight: number
+          reps: number
+          sets: number
+          trainingDate: string
+
+---
+- endpoint: /api/streak
+  method: GET
+  purpose: 継続日数を取得する
+
+  description: >
+    training_records の
+    trainingDate をもとに
+    連続達成日数を計算する
+
+  request:
+    body: none
+
+  response:
+    200:
+      streakDays: number
+
+    example:
+      streakDays: 7
