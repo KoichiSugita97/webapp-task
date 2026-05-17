@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import TrainingCard from "../components/TrainingCard";
+import TrainingList from "../components/TrainingList";
 
 type TrainingRecord = {
   id: number;
@@ -62,7 +62,7 @@ export default function Home() {
   if (records.length === 0) {
     return (
       <main style={{ padding: "30px" }}>
-        <h1>筋トレ履歴</h1>
+        <h1>💪 筋トレ履歴</h1>
         <p>まだ記録がありません。</p>
       </main>
     );
@@ -86,9 +86,7 @@ export default function Home() {
         💪 筋トレ履歴
       </h1>
 
-      {records.map((record) => (
-        <TrainingCard key={record.id} record={record} />
-      ))}
+      <TrainingList records={records} />
     </main>
   );
 }

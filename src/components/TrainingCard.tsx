@@ -11,6 +11,15 @@ type Props = {
 };
 
 export default function TrainingCard({ record }: Props) {
+  const partColor =
+    record.trainingPart === "肩"
+      ? "#2563eb"
+      : record.trainingPart === "腕"
+        ? "#7c3aed"
+        : record.trainingPart === "胸"
+          ? "#dc2626"
+          : "#16a34a";
+
   return (
     <div
       style={{
@@ -19,13 +28,15 @@ export default function TrainingCard({ record }: Props) {
         borderRadius: "16px",
         marginBottom: "20px",
         boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+        borderLeft: `8px solid ${partColor}`,
       }}
     >
       <h2
         style={{
           fontSize: "24px",
           fontWeight: "bold",
-          color: "#2563eb",
+          color: partColor,
+          marginBottom: "10px",
         }}
       >
         {record.trainingPart}
